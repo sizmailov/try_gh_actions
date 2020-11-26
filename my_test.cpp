@@ -13,6 +13,7 @@ int main() {
 
     if (add(1, 2) != 3) { return 1; }
     if (sub(1, 2) != -1) { return 1; }
+    if (sub(1, add(1,1)) != -1) { return 1; }
 
     return 0;
 }
