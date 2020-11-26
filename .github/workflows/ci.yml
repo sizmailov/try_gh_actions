@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # Testing on GCC using the GCC docker images (only recent images supported)
+  gcc:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gcc:
+          - 7
+          - latest
+        std:
+          - 11
+        include:
+          - gcc: 10
+            std: 20
+
+    name: "GCC ${{ matrix.gcc }} • C++${{ matrix.std }}• x64"
+    container: "gcc:${{ matrix.gcc }}"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup CMake 3.18
+        uses: jwlawson/actions-setup-cmake@v1.4
+        with:
+          cmake-version: 3.18
+
+      - name: Configure
+        run: cmake -S . -B build
+
+      - name: Build
+        run: cmake --build build -j 2
+
+      - name: C++ tests
+        run: cmake --build build --target test
